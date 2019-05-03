@@ -1,42 +1,26 @@
 mod schema;
 
-pub mod models;
-pub mod methods;
+//pub mod events;
+//pub mod groups;
+//pub mod shortevents;
+//pub mod tokens;
+pub mod users;
 
-use schema::short_event_votes::dsl::*;
-use schema::event_assignees::dsl::*;
-use schema::display_tokens::dsl::*;
-use schema::short_events::dsl::*;
-use schema::event_groups::dsl::*;
-use schema::events::dsl::*;
-use schema::users::dsl::*;
-use models::*;
+use diesel::r2d2::{ConnectionManager, Pool};
+use actix_web::actix::{Actor, SyncContext};
+use diesel::prelude::PgConnection;
+use diesel::r2d2::PoolError as Error;
 
-use diesel::prelude::*;
+pub type DbPool = Pool<ConnectionManager<PgConnection>>;
 
-pub fn get_connection(connection_string: &str) -> Result<PgConnection, ConnectionError> {
-  PgConnection::establish(connection_string)
+pub struct DbExec(pub Pool<ConnectionManager<PgConnection>>);
+
+impl Actor for DbExec {
+    type Context = SyncContext<Self>;
 }
 
-
-
-pub fn get_user_password(connection: &PgConnection, login: &String) -> Result<String, diesel::result::Error> {
-  users.select((
-    password
-  ))
-  .filter(users.adlogin.eq(login))
-  .first::<String>(connection)
+pub fn ignite(db_url: String) -> Result<DbPool, Error> {
+    let manager = ConnectionManager::<PgConnection>::new(db_url);
+    let pool = Pool::builder().build(manager)?;
+    Ok(pool)
 }
-
-pub fn find_display_token(connection: &PgConnection, check_token: &String) -> Result<bool, diesel::result::Error> {
-  display_tokens.select(
-    exists(
-      display_tokens.filter(
-        token.eq(check_token)
-      )
-    )
-  )
-  .get_result(connection)
-}
-
-pub fn 
