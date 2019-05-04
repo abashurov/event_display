@@ -4,9 +4,10 @@ use std::time::SystemTime;
 use std::error::Error;
 use chrono::Local;
 
-use futures::future::Future;
+use futures::{finished, {future::Future}};
 
-use crate::database::users::messages::{GetUserPassword};
+use crate::database::users::messages::{GetUserPassword, GetUserInfo};
+use crate::database::users::models::ExposableUser;
 use crate::app::AppState;
 
 const PREFIX: &str = "Bearer ";
@@ -17,6 +18,12 @@ struct Claims {
     sub: String,
     iat: u64,
     exp: u64,
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct Credentials {
+    login: String,
+    password: String,
 }
 
 /*
@@ -64,22 +71,38 @@ impl Message for AuthError {
 }
 
 
+*/
 
 
 
-
-pub fn get_active_user(req: HttpRequest<AppState>) -> Result<Option<User>, AuthError> {
+pub fn get_active_user(req: HttpRequest<AppState>) -> Option<ExposableUser> {
     if let Some(auth_header) = req.headers().get("Authorization") {
         match auth_header.to_str() {
             Ok(header) => {
-                if !header.startsWith(PREFIX) {
-                    Err(AuthError { message: "Invalid authorization method" })
+                if !header.starts_with(PREFIX) {
+                    return None
                 }
                 let token: String = header.replacen(PREFIX, "", 1);
-                user_from_auth(token, req.state().secret, req.state().db)
+                match decode::<Claims>(&token, req.state().secret.as_bytes(), &Validation::new(Algorithm::HS256)) {
+                    Ok(claim) => {
+                        let user_info = req.state().db.send(GetUserInfo {
+                            adlogin: claim.claims.sub,
+                        })
+                            .flatten()
+                            .wait();
+                        if let Ok(info) = user_info {
+                            Some(info.info)
+                        } else {
+                            None
+                        }
+                    }, 
+                    Err(_) => {
+                        None
+                    }
+                }
             },
-            Err(e) => {
-                Err(AuthError { message: format!("Could not extract token: {}", e) } )
+            Err(_) => {
+                None
             }
         }
     } else {
@@ -87,38 +110,13 @@ pub fn get_active_user(req: HttpRequest<AppState>) -> Result<Option<User>, AuthE
     }
 }
 
-fn user_from_auth(header: &String, secret: &String, connection: &PgConnection) -> Result<User, AuthError> {
-    match decode(header, secret, &Validation::new(Algorithm::HS256)) {
-        Ok(claim) => {
-            users::find(claim.sub)
-        }, 
-        Err(e) => {
-            Err(AuthError { message: e })
-        }
+pub fn get_current(req: HttpRequest<AppState>) -> FutureResponse<HttpResponse> {
+    if let Some(user) = get_active_user(req) {
+        HttpResponse::Ok().json(user)
+            .responder()
     }
-}
-
-
-
-struct ListGroups {}
-
-impl Message for ListGroups {
-    type Result = Result<Vec<EventGroup>, Error>;
-}
-
-impl Handler<ListGroups> for DbExecutor {
-    type Result = Result<Vec<EventGroup>, Error>;
-
-    fn handle(&mut self, msg: ListGroups, _: &mut Self::Context) -> Self::Result {
-        groups::list()
-    }
-}
-*/
-
-#[derive(Serialize, Deserialize)]
-pub struct Credentials {
-    login: String,
-    password: String,
+    HttpResponse::Ok().body("test")
+        .responder()
 }
 
 pub fn login((credentials, state): (Json<Credentials>, State<AppState>)) -> FutureResponse<HttpResponse> {

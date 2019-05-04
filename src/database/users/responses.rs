@@ -1,4 +1,4 @@
-use super::models::{ExposableUser, User};
+use super::models::{ExposableUser};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct StatusMsg {
