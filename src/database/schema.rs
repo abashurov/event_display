@@ -6,9 +6,9 @@ table! {
 }
 
 table! {
-    event_assignees (event_id, user_id) {
+    event_assignees (event_id, user_name) {
         event_id -> Int4,
-        user_id -> Int4,
+        user_name -> Varchar,
     }
 }
 
@@ -34,7 +34,7 @@ table! {
 table! {
     short_events (id) {
         id -> Int4,
-        user_id -> Int4,
+        user_name -> Varchar,
         description -> Varchar,
         time_begin -> Time,
         active -> Bool,
@@ -44,14 +44,13 @@ table! {
 table! {
     short_event_votes (id) {
         id -> Int4,
-        user_id -> Int4,
+        user_name -> Varchar,
         event_id -> Int4,
     }
 }
 
 table! {
-    users (id) {
-        id -> Int4,
+    users (adlogin) {
         adlogin -> Varchar,
         display_name -> Varchar,
         absent -> Bool,
@@ -62,11 +61,11 @@ table! {
 }
 
 joinable!(event_assignees -> events (event_id));
-joinable!(event_assignees -> users (user_id));
+joinable!(event_assignees -> users (user_name));
 joinable!(events -> event_groups (group_id));
 joinable!(short_event_votes -> short_events (event_id));
-joinable!(short_event_votes -> users (user_id));
-joinable!(short_events -> users (user_id));
+joinable!(short_event_votes -> users (user_name));
+joinable!(short_events -> users (user_name));
 
 allow_tables_to_appear_in_same_query!(
     display_tokens,

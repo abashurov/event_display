@@ -1,7 +1,7 @@
-use actix_web::{Error, actix::Message};
+use actix_web::{actix::Message, Error};
 
-use super::responses::{StatusMsg, UserListMsg, UserInfoMsg, UserPasswordMsg};
-use super::models::User;
+use super::models::{UpdateableUser, User};
+use super::responses::{StatusMsg, UserInfoMsg, UserListMsg, UserPasswordMsg};
 
 #[derive(Deserialize, Serialize, Debug)]
 pub struct ListUsers {}
@@ -21,7 +21,7 @@ impl Message for GetUserInfo {
 
 #[derive(Deserialize, Serialize, Debug)]
 pub struct SetUserInfo {
-    pub user: User,
+    pub user: UpdateableUser,
 }
 
 impl Message for SetUserInfo {
@@ -47,18 +47,20 @@ impl Message for GetUserPassword {
     type Result = Result<UserPasswordMsg, Error>;
 }
 
-/*
 #[derive(Deserialize, Serialize, Debug)]
 pub struct AddUser {
-    pub adlogin: String,
-    pub displayName: String,
-    pub absent: bool,
-    pub password: String,
-    pub superuser: bool,
-    pub availability: i8,
+    pub new_user: User,
 }
 
 impl Message for AddUser {
     type Result = Result<StatusMsg, Error>;
 }
-*/
+
+#[derive(Deserialize, Serialize, Debug)]
+pub struct DeleteUser {
+    pub adlogin: String,
+}
+
+impl Message for DeleteUser {
+    type Result = Result<StatusMsg, Error>;
+}

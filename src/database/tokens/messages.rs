@@ -1,4 +1,4 @@
-use actix_web::{Error, actix::Message};
+use actix_web::{actix::Message, Error};
 
 use models::DisplayToken;
 use responses::TokenInfoMsg;

@@ -1,6 +1,6 @@
-use models::{EventGroup};
+use super::models::EventGroup;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct GroupListMsg {
-    pub users: Vec<EventGroup>,
+    pub groups: Vec<EventGroup>,
 }

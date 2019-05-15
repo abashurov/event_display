@@ -51,8 +51,7 @@ CREATE TABLE events (
 );
 
 CREATE TABLE users (
-    id SERIAL NOT NULL PRIMARY KEY,
-    adlogin VARCHAR(128) NOT NULL UNIQUE,
+    adlogin VARCHAR(128) NOT NULL PRIMARY KEY,
     display_name VARCHAR(256) NOT NULL DEFAULT 'Default engineer',
     absent BOOLEAN NOT NULL DEFAULT FALSE,
     password VARCHAR(128) NOT NULL,
@@ -63,24 +62,23 @@ CREATE TABLE users (
 
 CREATE TABLE event_assignees (
     event_id INTEGER NOT NULL REFERENCES events(id) ON DELETE CASCADE, --Reasonable to assume nobody will
-    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE, --be happy to remove it manually
-    PRIMARY KEY (event_id, user_id) --Every user cannot be assigned to each event more than once
+    user_name VARCHAR(128) NOT NULL REFERENCES users(adlogin) ON DELETE CASCADE, --be happy to remove it manually
+    PRIMARY KEY (event_id, user_name) --Every user cannot be assigned to each event more than once
 );
 
 CREATE TABLE short_events (
     id SERIAL NOT NULL PRIMARY KEY,
-    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    user_name VARCHAR(128) NOT NULL REFERENCES users(adlogin) ON DELETE CASCADE,
     description VARCHAR(128) NOT NULL,
     time_begin TIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     active BOOLEAN NOT NULL DEFAULT TRUE,
-    UNIQUE (user_id, active)
+    UNIQUE (user_name, active)
 );
 
 CREATE TABLE short_event_votes (
-    id SERIAL NOT NULL PRIMARY KEY,
-    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    user_name VARCHAR(128) NOT NULL REFERENCES users(adlogin) ON DELETE CASCADE,
     event_id INTEGER NOT NULL REFERENCES short_events(id) ON DELETE CASCADE,
-    UNIQUE (id, user_id, event_id)
+    PRIMARY KEY (user_name, event_id)
 );
 
 CREATE TABLE display_tokens (

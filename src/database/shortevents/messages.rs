@@ -1,7 +1,7 @@
-use actix_web::{Error, actix::Message};
+use actix_web::{actix::Message, Error};
 
 use models::ShortEvent;
-use responses::{ShortEventListMsg, StatusMsg, ShortEventInfoMsg};
+use responses::{ShortEventInfoMsg, ShortEventListMsg, StatusMsg};
 
 #[derive(Deserialize, Serialize, Debug)]
 pub struct ListShortEvents {}

@@ -1,11 +1,11 @@
-use models::ShortEvent;
-use schema::short_event_votes::dsl::*;
-use schema::shortevents::dsl::*;
+use super::models::{ShortEvent, ShortEventVote};
+use crate::database::schema::short_event_votes::dsl::*;
+use crate::database::schema::short_events::dsl::*;
 
 use diesel::prelude::*;
 
 pub fn list(connection: &PgConnection) -> Result<Vec<ShortEvent>, diesel::result::Error> {
-    shortevents
+    short_events
         .filter(active.eq(true))
         .load::<ShortEvent>(connection)
 }
@@ -14,31 +14,33 @@ pub fn insert(
     connection: &PgConnection,
     shortevent: &ShortEvent,
 ) -> Result<usize, diesel::result::Error> {
-    diesel::insert(shortevents)
+    diesel::insert_into(short_events)
         .values(shortevent)
         .execute(connection)
 }
 
 pub fn delete(connection: &PgConnection, shortEventId: u8) -> Result<usize, diesel::result::Error> {
-    diesel::delete(shortevents)
+    diesel::delete(short_events)
         .filter(id.eq(shortEventId))
         .execute(connection)
 }
 
 pub fn cleanup(connection: &PgConnection) -> Result<usize, diesel::result::Error> {
-    diesel::delete(shortevents)
+    diesel::delete(short_events)
         .filter(active.eq(false))
         .execute(connection)
 }
 
 pub fn register_vote(
     connection: &PgConnection,
-    shortEventId: u8,
-    userId: u8,
+    target_short_event_id: i32,
+    target_user_name: String,
 ) -> Result<usize, diesel::result::Error> {
-    diesel::insert(short_event_votes)
-        .values((userId, shortEventId))
-        .into_columns((short_event_votes::user_id, short_event_votes::event_id))
+    diesel::insert_into(short_event_votes)
+        .values((
+            event_id.eq(target_short_event_id),
+            user_name.eq(target_user_name),
+        ))
         .execute(connection)
 }
 

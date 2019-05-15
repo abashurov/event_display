@@ -1,5 +1,5 @@
-use models::EventGroup;
-use schema::event_groups::dsl::*;
+use super::models::EventGroup;
+use crate::database::schema::event_groups::dsl::*;
 
 use diesel::prelude::*;
 

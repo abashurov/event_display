@@ -1,10 +1,12 @@
-use actix_web::{Error, actix::Message};
+use actix_web::{actix::Message, Error};
 
-use models::Event;
-use responses::{StatusMsg, EventListMsg, EventAssigneeListMsg};
+use super::models::{Event, EventAssignee};
+use super::responses::{EventAssigneeListMsg, EventListMsg, StatusMsg};
 
 #[derive(Deserialize, Serialize, Debug)]
-pub struct GetGroupEvents {}
+pub struct GetGroupEvents {
+    pub group_id: i32,
+}
 
 impl Message for GetGroupEvents {
     type Result = Result<EventListMsg, Error>;
@@ -21,7 +23,7 @@ impl Message for AddGroupEvent {
 
 #[derive(Deserialize, Serialize, Debug)]
 pub struct DeleteGroupEvent {
-    pub id: u8,
+    pub event_id: i32,
 }
 
 impl Message for DeleteGroupEvent {
@@ -30,8 +32,8 @@ impl Message for DeleteGroupEvent {
 
 #[derive(Deserialize, Serialize, Debug)]
 pub struct AssignGroupEvent {
-    pub eventId: u8,
-    pub userId: u8,
+    pub event_id: i32,
+    pub user_name: String,
 }
 
 impl Message for AssignGroupEvent {
@@ -40,8 +42,8 @@ impl Message for AssignGroupEvent {
 
 #[derive(Deserialize, Serialize, Debug)]
 pub struct DeassignGroupEvent {
-    pub eventId: u8,
-    pub userId: u8,
+    pub event_id: i32,
+    pub user_name: String,
 }
 
 impl Message for DeassignGroupEvent {
@@ -58,8 +60,19 @@ impl Message for SetGroupEvent {
 }
 
 #[derive(Deserialize, Serialize, Debug)]
-pub struct GetGroupEventAssigneeList {}
+pub struct GetGroupEventAssigneeList {
+    pub event_id: i32,
+}
 
 impl Message for GetGroupEventAssigneeList {
+    type Result = Result<EventAssigneeListMsg, Error>;
+}
+
+#[derive(Deserialize, Serialize, Debug)]
+pub struct GetUserGroupEventList {
+    pub user_name: String,
+}
+
+impl Message for GetUserGroupEventList {
     type Result = Result<EventAssigneeListMsg, Error>;
 }

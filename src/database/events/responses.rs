@@ -1,4 +1,4 @@
-use models::{Event, EventAssignee};
+use super::models::{Event, EventAssignee};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct StatusMsg {
@@ -13,5 +13,5 @@ pub struct EventListMsg {
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct EventAssigneeListMsg {
-    pub assignees: Vec<EventAssignee>,
+    pub event_assignees: Vec<(Event, EventAssignee)>,
 }

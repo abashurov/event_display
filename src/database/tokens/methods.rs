@@ -1,4 +1,4 @@
-use schema::display_tokens::dsl::*;
+use crate::database::schema::display_tokens::dsl::*;
 
 use diesel::prelude::*;
 

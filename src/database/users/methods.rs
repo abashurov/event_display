@@ -1,14 +1,14 @@
-use super::models::{ExposableUser, User};
+use super::models::{ExposableUser, UpdateableUser, User};
 use crate::database::schema::users::dsl::*;
 
 use diesel::prelude::*;
 
 pub fn find(
     connection: &PgConnection,
-    target_login: &String,
+    target_adlogin: &String,
 ) -> Result<ExposableUser, diesel::result::Error> {
     users
-        .filter(adlogin.eq(target_login))
+        .filter(adlogin.eq(target_adlogin))
         .select((adlogin, display_name, absent, superuser, availability))
         .first::<ExposableUser>(connection)
 }
@@ -19,36 +19,43 @@ pub fn list(connection: &PgConnection) -> Result<Vec<ExposableUser>, diesel::res
         .load::<ExposableUser>(connection)
 }
 
-pub fn update_full(connection: &PgConnection, user: &User) -> Result<usize, diesel::result::Error> {
-    diesel::update(users)
-        .filter(adlogin.eq(user.adlogin.clone()))
-        .set((
-            display_name.eq(user.displayName.clone()),
-            absent.eq(user.absent),
-            superuser.eq(user.superuser),
-            availability.eq(user.availability),
-            password.eq(password),
-        ))
-        .execute(connection)
+pub fn update_partial(
+    connection: &PgConnection,
+    user: &UpdateableUser,
+) -> Result<User, diesel::result::Error> {
+    user.save_changes(connection)
 }
 
 pub fn update_password(
     connection: &PgConnection,
-    login: &String,
+    target_adlogin: &String,
     new_password: &String,
 ) -> Result<usize, diesel::result::Error> {
     diesel::update(users)
-        .filter(adlogin.eq(login))
+        .filter(adlogin.eq(target_adlogin))
         .set(password.eq(new_password))
         .execute(connection)
 }
 
 pub fn get_password(
     connection: &PgConnection,
-    login: &String,
+    target_adlogin: &String,
 ) -> Result<String, diesel::result::Error> {
     users
         .select(password)
-        .filter(adlogin.eq(login))
+        .filter(adlogin.eq(target_adlogin))
         .first::<String>(connection)
+}
+
+pub fn add(connection: &PgConnection, user: &User) -> Result<usize, diesel::result::Error> {
+    diesel::insert_into(users).values(user).execute(connection)
+}
+
+pub fn delete(
+    connection: &PgConnection,
+    target_adlogin: &String,
+) -> Result<usize, diesel::result::Error> {
+    diesel::delete(users)
+        .filter(adlogin.eq(target_adlogin))
+        .execute(connection)
 }

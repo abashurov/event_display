@@ -1,10 +1,10 @@
-use actix_web::{Error, actix::Message};
+use actix_web::{actix::Message, Error};
 
-use responses::GroupListMsg;
+use super::responses::*;
 
 #[derive(Deserialize, Serialize, Debug)]
-pub struct GetGroupList {}
+pub struct ListGroups {}
 
-impl Message for GetGroupList {
+impl Message for ListGroups {
     type Result = Result<GroupListMsg, Error>;
 }

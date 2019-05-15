@@ -1,15 +1,15 @@
 mod schema;
 
-//pub mod events;
-//pub mod groups;
 //pub mod shortevents;
+pub mod events;
+pub mod groups;
 //pub mod tokens;
 pub mod users;
 
-use diesel::r2d2::{ConnectionManager, Pool};
 use actix_web::actix::{Actor, SyncContext};
 use diesel::prelude::PgConnection;
 use diesel::r2d2::PoolError as Error;
+use diesel::r2d2::{ConnectionManager, Pool};
 
 pub type DbPool = Pool<ConnectionManager<PgConnection>>;
 
