@@ -21,6 +21,20 @@ impl Handler<GetGroupEvents> for DbExec {
     }
 }
 
+impl Handler<GetGroupEventInfo> for DbExec {
+    type Result = Result<EventAssigneeListMsg, Error>;
+
+    fn handle(&mut self, message: GetGroupEventInfo, _: &mut Self::Context) -> Self::Result {
+        let db_conn = &self.0.get().map_err(error::ErrorInternalServerError)?;
+        match get(db_conn, message.event_id) {
+            Ok(event_info) => Ok(EventAssigneeListMsg {
+                event_assignees: event_info,
+            }),
+            Err(e) => Err(error::ErrorInternalServerError(e)),
+        }
+    }
+}
+
 impl Handler<AddGroupEvent> for DbExec {
     type Result = Result<StatusMsg, Error>;
 

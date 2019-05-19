@@ -1,4 +1,4 @@
-use super::models::{Event, EventAssignee};
+use super::models::{Event, EventAssignee, InsertableEvent};
 use crate::database::schema::event_assignees::dsl::*;
 //use crate::database::schema::event_groups::dsl::*;
 use crate::database::schema::events::dsl::*;
@@ -49,7 +49,10 @@ pub fn update(connection: &PgConnection, event: &Event) -> Result<usize, diesel:
 }
 */
 
-pub fn insert(connection: &PgConnection, event: &Event) -> Result<usize, diesel::result::Error> {
+pub fn insert(
+    connection: &PgConnection,
+    event: &InsertableEvent,
+) -> Result<usize, diesel::result::Error> {
     diesel::insert_into(events)
         .values(event)
         .execute(connection)

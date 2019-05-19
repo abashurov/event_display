@@ -12,11 +12,6 @@ pub struct AuthMiddleware;
 
 impl Middleware<AppState> for AuthMiddleware {
     fn start(&self, req: &HttpRequest<AppState>) -> actix_web::Result<Started> {
-        // don't validate CORS pre-flight requests
-        if req.method() == "OPTIONS" {
-            return Ok(Started::Done);
-        }
-
         /* We look for the Authorization header with the "Bearer <token>" contents */
         if let Some(header) = req.headers().get("Authorization") {
             match header.to_str() {

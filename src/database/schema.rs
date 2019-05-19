@@ -1,11 +1,4 @@
 table! {
-    display_tokens (id) {
-        id -> Int4,
-        token -> Varchar,
-    }
-}
-
-table! {
     event_assignees (event_id, user_name) {
         event_id -> Int4,
         user_name -> Varchar,
@@ -28,6 +21,7 @@ table! {
         #[sql_name = "type"]
         event_type -> Int2,
         group_id -> Int4,
+        display_name -> Varchar,
     }
 }
 
@@ -55,7 +49,7 @@ table! {
         display_name -> Varchar,
         absent -> Bool,
         password -> Varchar,
-        superuser -> Bool,
+        role -> Int2,
         availability -> Int2,
     }
 }
@@ -68,7 +62,6 @@ joinable!(short_event_votes -> users (user_name));
 joinable!(short_events -> users (user_name));
 
 allow_tables_to_appear_in_same_query!(
-    display_tokens,
     event_assignees,
     event_groups,
     events,

@@ -9,13 +9,14 @@ pub fn find(
 ) -> Result<ExposableUser, diesel::result::Error> {
     users
         .filter(adlogin.eq(target_adlogin))
-        .select((adlogin, display_name, absent, superuser, availability))
+        .select((adlogin, display_name, absent, role, availability))
         .first::<ExposableUser>(connection)
 }
 
 pub fn list(connection: &PgConnection) -> Result<Vec<ExposableUser>, diesel::result::Error> {
     users
-        .select((adlogin, display_name, absent, superuser, availability))
+        .select((adlogin, display_name, absent, role, availability))
+        .filter(role.ne(1)) /* Filter out display role */
         .load::<ExposableUser>(connection)
 }
 

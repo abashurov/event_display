@@ -11,7 +11,7 @@ pub struct UserChangeSet {
     pub display_name: Option<String>,
     pub absent: Option<bool>,
     pub password: Option<String>,
-    pub superuser: Option<bool>,
+    pub role: Option<i16>,
     pub availability: Option<i16>,
 }
 
@@ -91,7 +91,7 @@ pub fn update_user(
         absent: user.absent,
         display_name: user.display_name.clone(),
         password: user.password.clone(),
-        superuser: user.superuser,
+        role: user.role,
         availability: user.availability,
     };
     if let Some(password) = &user.password {

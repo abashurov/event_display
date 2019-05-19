@@ -7,7 +7,7 @@ pub struct User {
     pub display_name: String,
     pub absent: bool,
     pub password: String,
-    pub superuser: bool,
+    pub role: i16,
     pub availability: i16,
 }
 
@@ -16,7 +16,7 @@ pub struct ExposableUser {
     pub adlogin: String,
     pub display_name: String,
     pub absent: bool,
-    pub superuser: bool,
+    pub role: i16,
     pub availability: i16,
 }
 
@@ -28,6 +28,6 @@ pub struct UpdateableUser {
     pub display_name: Option<String>,
     pub absent: Option<bool>,
     pub password: Option<String>,
-    pub superuser: Option<bool>,
+    pub role: Option<i16>,
     pub availability: Option<i16>,
 }

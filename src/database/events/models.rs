@@ -21,4 +21,16 @@ pub struct Event {
     pub day: i16,
     pub event_type: i16,
     pub group_id: i32,
+    pub display_name: String,
+}
+
+#[derive(Serialize, Deserialize, Insertable, Debug)]
+#[table_name = "events"]
+pub struct InsertableEvent {
+    pub time_from: NaiveTime,
+    pub time_to: NaiveTime,
+    pub day: i16,
+    pub event_type: i16,
+    pub group_id: i32,
+    pub display_name: String,
 }

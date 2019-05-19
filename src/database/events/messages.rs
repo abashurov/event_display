@@ -1,6 +1,6 @@
 use actix_web::{actix::Message, Error};
 
-use super::models::{Event, EventAssignee};
+use super::models::{Event, EventAssignee, InsertableEvent};
 use super::responses::{EventAssigneeListMsg, EventListMsg, StatusMsg};
 
 #[derive(Deserialize, Serialize, Debug)]
@@ -13,8 +13,17 @@ impl Message for GetGroupEvents {
 }
 
 #[derive(Deserialize, Serialize, Debug)]
+pub struct GetGroupEventInfo {
+    pub event_id: i32,
+}
+
+impl Message for GetGroupEventInfo {
+    type Result = Result<EventAssigneeListMsg, Error>;
+}
+
+#[derive(Deserialize, Serialize, Debug)]
 pub struct AddGroupEvent {
-    pub event: Event,
+    pub event: InsertableEvent,
 }
 
 impl Message for AddGroupEvent {

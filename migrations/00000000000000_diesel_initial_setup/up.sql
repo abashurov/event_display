@@ -44,9 +44,12 @@ CREATE TABLE events (
     id SERIAL NOT NULL PRIMARY KEY,
     time_from TIME NOT NULL,
     time_to TIME NOT NULL,
+    --day: 0 to 6
     day SMALLINT NOT NULL,
-    type SMALLINT NOT NULL, --0x0 -> chats, 0x1 -> calls, others -> not implemented
+    --type: 0x0 -> chats, 0x1 -> calls, others -> not implemented
+    type SMALLINT NOT NULL,
     group_id INTEGER NOT NULL REFERENCES event_groups(id) ON DELETE RESTRICT,
+    display_name VARCHAR(128) NOT NULL,
     CONSTRAINT valid_type CHECK (type < 2)
 );
 
@@ -55,7 +58,8 @@ CREATE TABLE users (
     display_name VARCHAR(256) NOT NULL DEFAULT 'Default engineer',
     absent BOOLEAN NOT NULL DEFAULT FALSE,
     password VARCHAR(128) NOT NULL,
-    superuser BOOLEAN NOT NULL DEFAULT FALSE,
+    --role: 0x0 -> read-only to self, 0x1 -> ro to all, 0x2 -> rw to all, others -> not implemented
+    role SMALLINT NOT NULL DEFAULT 0,
     availability SMALLINT NOT NULL DEFAULT 0, --Bitmask 0x0(sun)(sat)(fri)(thu)(wed)(tue)(mon)
     CONSTRAINT valid_availability CHECK (availability < 256)
 );
@@ -79,9 +83,4 @@ CREATE TABLE short_event_votes (
     user_name VARCHAR(128) NOT NULL REFERENCES users(adlogin) ON DELETE CASCADE,
     event_id INTEGER NOT NULL REFERENCES short_events(id) ON DELETE CASCADE,
     PRIMARY KEY (user_name, event_id)
-);
-
-CREATE TABLE display_tokens (
-    id SERIAL NOT NULL PRIMARY KEY,
-    token VARCHAR(128) NOT NULL
 );

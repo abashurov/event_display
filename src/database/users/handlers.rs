@@ -98,7 +98,7 @@ impl Handler<AddUser> for DbExec {
                     display_name: target.new_user.display_name,
                     absent: target.new_user.absent,
                     password: hashed_password,
-                    superuser: target.new_user.superuser,
+                    role: target.new_user.role,
                     availability: target.new_user.availability,
                 };
                 match add(db_conn, &new_user) {

@@ -1,18 +1,21 @@
-use actix_web::{error, http, App, HttpRequest, HttpResponse};
+use actix_web::{AsyncResponder, FutureResponse, HttpResponse, Json, Path, State};
 
-use database::methods::groups;
-use database::models::EventGroup;
+use futures::future::Future;
 
-struct ListGroups {}
+use crate::database::groups::messages::*;
+use crate::routes::AppState;
 
-impl Message for ListGroups {
-    type Result = Result<Vec<EventGroup>, Error>;
-}
-
-impl Handler<ListGroups> for DbExecutor {
-    type Result = Result<Vec<EventGroup>, Error>;
-
-    fn handle(&mut self, msg: ListGroups, _: &mut Self::Context) -> Self::Result {
-        groups::list()
-    }
+pub fn list_groups(state: (State<AppState>)) -> FutureResponse<HttpResponse> {
+    state
+        .db
+        .send(ListGroups {})
+        .from_err()
+        .and_then(move |grouplist| match grouplist {
+            Ok(grouplist_values) => Ok(HttpResponse::Ok().json(grouplist_values)),
+            Err(e) => {
+                warn!("Failed to list users: {}", e);
+                Ok(HttpResponse::InternalServerError().into())
+            }
+        })
+        .responder()
 }
