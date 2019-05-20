@@ -1,3 +1,7 @@
+/*
+
+NOT YET IMPLEMENTED
+
 use crate::actix::*;
 use actix_web::*;
 
@@ -21,7 +25,7 @@ impl Actor for Ws {
 
 impl Ws {
   fn new() -> Self {
-    Self { 
+    Self {
       hb: Instant::now(),
       access_token: "".to_string(),
     }
@@ -49,3 +53,4 @@ impl StreamHandler<ws::Message, ws::ProtocolError> for Ws {
         }
     }
 }
+*/

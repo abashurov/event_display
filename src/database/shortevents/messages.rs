@@ -1,7 +1,7 @@
 use actix_web::{actix::Message, Error};
 
-use models::ShortEvent;
-use responses::{ShortEventInfoMsg, ShortEventListMsg, StatusMsg};
+use super::responses::{ShortEventListMsg, StatusMsg};
+use super::models::{InsertableShortEvent, ShortEvent, ShortEventVote};
 
 #[derive(Deserialize, Serialize, Debug)]
 pub struct ListShortEvents {}
@@ -12,7 +12,7 @@ impl Message for ListShortEvents {
 
 #[derive(Deserialize, Serialize, Debug)]
 pub struct AddShortEvent {
-    pub event: ShortEvent,
+    pub event: InsertableShortEvent,
 }
 
 impl Message for AddShortEvent {
@@ -21,7 +21,8 @@ impl Message for AddShortEvent {
 
 #[derive(Deserialize, Serialize, Debug)]
 pub struct DeleteShortEvent {
-    pub id: u8,
+    pub shortevent_id: i32,
+    pub user_name: String,
 }
 
 impl Message for DeleteShortEvent {
@@ -30,8 +31,7 @@ impl Message for DeleteShortEvent {
 
 #[derive(Deserialize, Serialize, Debug)]
 pub struct VoteShortEvent {
-    pub eventId: u8,
-    pub userId: u8,
+    pub vote: ShortEventVote,
 }
 
 impl Message for VoteShortEvent {
@@ -40,9 +40,9 @@ impl Message for VoteShortEvent {
 
 #[derive(Deserialize, Serialize, Debug)]
 pub struct GetShortEvent {
-    pub eventId: u8,
+    pub shortevent_id: i32,
 }
 
 impl Message for GetShortEvent {
-    type Result = Result<ShortEventInfoMsg, Error>;
+    type Result = Result<ShortEventListMsg, Error>;
 }

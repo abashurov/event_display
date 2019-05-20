@@ -1,18 +1,20 @@
-use super::models::{Event, EventAssignee, InsertableEvent};
-use crate::database::schema::event_assignees::dsl::*;
-//use crate::database::schema::event_groups::dsl::*;
 use crate::database::schema::events::dsl::*;
+use crate::database::schema::event_assignees::dsl::*;
+use super::models::{Event, EventAssignee, InsertableEvent};
 
 use diesel::prelude::*;
 
 pub fn get(
     connection: &PgConnection,
     target_event_id: i32,
-) -> Result<Vec<(Event, EventAssignee)>, diesel::result::Error> {
-    events
+) -> Result<Vec<(Event, Vec<EventAssignee>)>, diesel::result::Error> {
+    let target_event = events
         .find(target_event_id)
-        .inner_join(event_assignees)
-        .load::<(Event, EventAssignee)>(connection)
+        .load::<Event>(connection)?;
+    let assignee_list = EventAssignee::belonging_to(&target_event)
+        .load::<EventAssignee>(connection)?
+        .grouped_by(&target_event);
+    Ok(target_event.into_iter().zip(assignee_list).collect())
 }
 
 pub fn list(
@@ -24,6 +26,7 @@ pub fn list(
         .load::<Event>(connection)
 }
 
+/*
 pub fn list_by_day(
     connection: &PgConnection,
     target_group_id: i32,
@@ -34,7 +37,6 @@ pub fn list_by_day(
         .load::<Event>(connection)
 }
 
-/*
 pub fn update(connection: &PgConnection, event: &Event) -> Result<usize, diesel::result::Error> {
     diesel::update(events)
         .filter(id.eq(event.id))
@@ -97,19 +99,28 @@ pub fn deassign(
 pub fn list_assignees(
     connection: &PgConnection,
     target_event_id: i32,
-) -> Result<Vec<(Event, EventAssignee)>, diesel::result::Error> {
-    events
-        .inner_join(event_assignees)
-        .filter(id.eq(target_event_id))
-        .load::<(Event, EventAssignee)>(connection)
+) -> Result<Vec<(Event, Vec<EventAssignee>)>, diesel::result::Error> {
+    let target_event = events
+        .find(target_event_id)
+        .load::<Event>(connection)?;
+    let assignee_list = EventAssignee::belonging_to(&target_event)
+        .load::<EventAssignee>(connection)?
+        .grouped_by(&target_event);
+    Ok(target_event.into_iter().zip(assignee_list).collect())
 }
 
 pub fn list_events(
     connection: &PgConnection,
     target_user_name: String,
-) -> Result<Vec<(Event, EventAssignee)>, diesel::result::Error> {
-    events
-        .inner_join(event_assignees)
+) -> Result<Vec<(Event, Vec<EventAssignee>)>, diesel::result::Error> {
+    // TODO: Change this to a more bearable query/filter
+    let event_list = events
+        .select((id, time_from, time_to, day, event_type, group_id, display_name))
+        .left_outer_join(event_assignees)
         .filter(user_name.eq(target_user_name))
-        .load::<(Event, EventAssignee)>(connection)
+        .load::<Event>(connection)?;
+    let assignee_list = EventAssignee::belonging_to(&event_list)
+        .load::<EventAssignee>(connection)?
+        .grouped_by(&event_list);
+    Ok(event_list.into_iter().zip(assignee_list).collect())
 }

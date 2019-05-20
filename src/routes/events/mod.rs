@@ -1,7 +1,8 @@
-use actix_web::middleware::session::RequestSession;
-use actix_web::{AsyncResponder, FutureResponse, HttpRequest, HttpResponse, Json, Path, State};
 use chrono::NaiveTime;
 use futures::future::Future;
+use actix_web::middleware::session::RequestSession;
+use actix_web::{AsyncResponder, FutureResponse, HttpRequest, HttpResponse, Json, Path, State};
+
 
 use crate::database::events::messages::*;
 use crate::database::events::models::{EventAssignee, InsertableEvent};

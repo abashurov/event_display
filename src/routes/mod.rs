@@ -1,21 +1,17 @@
-pub mod groups;
-//pub mod errors;
 pub mod auth;
-pub mod events;
 pub mod users;
-//pub mod websockets;
+pub mod events;
+pub mod groups;
+pub mod shortevents;
 
-
-use actix_web::{http::Method, middleware::Logger, App};
-use actix_web::middleware::session::SessionStorage;
 use actix::prelude::{Addr, SyncArbiter};
+use actix_web::middleware::session::SessionStorage;
+use actix_web::{http::Method, middleware::Logger, App};
 
-use crate::middlewares::authstorage::AuthSessionBackend;
-//use crate::middlewares::permissions::RoleMiddleware;
+use crate::database::{ignite, DbExec};
 use crate::middlewares::auth::AuthMiddleware;
 use crate::middlewares::role::RoleMiddleware;
-use crate::database::{ignite, DbExec};
-
+use crate::middlewares::authstorage::AuthSessionBackend;
 
 pub struct AppState {
     pub db: Addr<DbExec>,
@@ -53,7 +49,7 @@ pub fn start() -> App<AppState> {
         })
         .scope("/users", |r| {
             r.middleware(AuthMiddleware)
-                .middleware(RoleMiddleware::with_display_or_above())
+                .middleware(RoleMiddleware::new())
                 .resource("", |r| {
                     r.get().with(users::list_users)
                 })
@@ -114,5 +110,17 @@ pub fn start() -> App<AppState> {
                         r.delete().with(events::delete_event_assignee)
                     })
             })
+        })
+        .scope("/shortevents" , |r| {
+            r.middleware(AuthMiddleware)
+                .resource("", |r| {
+                    r.get().with(shortevents::list_shortevents);
+                    r.post().with(shortevents::add_shortevent)
+                })
+                .resource("/{shortevent_id}", |r| {
+                    r.get().with(shortevents::get_shortevent);
+                    r.post().with(shortevents::register_shortevent_vote);
+                    r.delete().with(shortevents::delete_shortevent)
+                })
         })
 }

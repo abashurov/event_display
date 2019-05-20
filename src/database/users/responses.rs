@@ -8,12 +8,12 @@ pub struct StatusMsg {
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct UserListMsg {
-    pub users: Vec<ExposableUser>,
+    pub result: Vec<ExposableUser>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct UserInfoMsg {
-    pub info: ExposableUser,
+    pub result: ExposableUser,
 }
 
 #[derive(Debug, Serialize, Deserialize)]

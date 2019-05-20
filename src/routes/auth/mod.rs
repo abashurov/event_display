@@ -1,11 +1,11 @@
+use futures::future::Future;
 use actix_web::http::header::HeaderValue;
 use actix_web::middleware::session::RequestSession;
 use actix_web::{AsyncResponder, FutureResponse, HttpRequest, HttpResponse, Json, State};
-use futures::future::Future;
 
-use crate::database::users::messages::{GetUserInfo, GetUserPassword, SetUserPassword};
 use crate::routes::AppState;
 use crate::utils::tokens::{token_from_claims, Credentials};
+use crate::database::users::messages::{GetUserInfo, GetUserPassword, SetUserPassword};
 
 #[derive(Deserialize, Serialize)]
 pub struct Password {
@@ -64,7 +64,7 @@ pub fn get_active_user(req: &HttpRequest<AppState>) -> FutureResponse<HttpRespon
                     .and_then(| user | {
                         match user {
                             Ok(user_data) => {
-                                return Ok(HttpResponse::Ok().json(user_data.info))
+                                return Ok(HttpResponse::Ok().json(user_data.result))
                             },
                             Err(e) => {
                                 warn!("Registered inconsistency, auth extracted token, but the user does not exist, or connection failed; DB said: {}", e);

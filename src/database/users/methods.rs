@@ -1,7 +1,8 @@
-use super::models::{ExposableUser, UpdateableUser, User};
-use crate::database::schema::users::dsl::*;
-
 use diesel::prelude::*;
+
+use super::models::{ExposableUser, UpdateableUser, User};
+
+use crate::database::schema::users::dsl::*;
 
 pub fn find(
     connection: &PgConnection,

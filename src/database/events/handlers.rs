@@ -1,7 +1,7 @@
 use actix_web::{actix::Handler, error, Error};
 
-use super::messages::*;
 use super::methods::*;
+use super::messages::*;
 use super::responses::{EventAssigneeListMsg, EventListMsg, StatusMsg};
 
 use crate::database::DbExec;
@@ -28,7 +28,7 @@ impl Handler<GetGroupEventInfo> for DbExec {
         let db_conn = &self.0.get().map_err(error::ErrorInternalServerError)?;
         match get(db_conn, message.event_id) {
             Ok(event_info) => Ok(EventAssigneeListMsg {
-                event_assignees: event_info,
+                result: event_info,
             }),
             Err(e) => Err(error::ErrorInternalServerError(e)),
         }
@@ -119,7 +119,7 @@ impl Handler<GetGroupEventAssigneeList> for DbExec {
         let db_conn = &self.0.get().map_err(error::ErrorInternalServerError)?;
         match list_assignees(db_conn, message.event_id) {
             Ok(assignee_list) => Ok(EventAssigneeListMsg {
-                event_assignees: assignee_list,
+                result: assignee_list,
             }),
             Err(e) => Err(error::ErrorInternalServerError(e)),
         }
@@ -133,7 +133,7 @@ impl Handler<GetUserGroupEventList> for DbExec {
         let db_conn = &self.0.get().map_err(error::ErrorInternalServerError)?;
         match list_events(db_conn, message.user_name) {
             Ok(event_list) => Ok(EventAssigneeListMsg {
-                event_assignees: event_list,
+                result: event_list,
             }),
             Err(e) => Err(error::ErrorInternalServerError(e)),
         }

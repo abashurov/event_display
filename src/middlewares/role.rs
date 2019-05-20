@@ -1,9 +1,8 @@
+use std::rc::Rc;
+use actix_web::HttpRequest;
+use futures::future::Future;
 use actix_web::middleware::session::RequestSession;
 use actix_web::middleware::{Middleware, Started};
-use futures::future::Future;
-use actix_web::HttpRequest;
-use std::sync::Arc;
-use std::rc::Rc;
 
 use crate::database::users::messages::GetUserInfo;
 use crate::routes::AppState;
@@ -23,6 +22,15 @@ struct RoleMiddlewareInner {
 }
 
 impl RoleMiddleware {
+    pub fn new() -> RoleMiddleware {
+        let inner = RoleMiddlewareInner {
+            access_level: DEFAULT_ACCESS_LEVEL,
+        };
+        RoleMiddleware {
+            inner: Rc::new(inner),
+        }
+    }
+
     pub fn with_user_or_above() -> RoleMiddleware {
         let inner = RoleMiddlewareInner {
             access_level: SELF_RO_ACCESS,
@@ -73,10 +81,10 @@ impl Middleware<AppState> for RoleMiddleware {
                                 let e_access = Box::new(expected_access);
                                 match user {
                                     Ok(user_data) => {
-                                        if user_data.info.role >= **e_access {
+                                        if user_data.result.role >= **e_access {
                                             return futures::future::ok(None);
                                         } else {
-                                            info!("Registered unauthenticated attempt to access route as {}", user_data.info.adlogin);
+                                            info!("Registered unauthenticated attempt to access route as {}", user_data.result.adlogin);
                                             return futures::future::err(actix_web::error::ErrorUnauthorized("Access denied"));
                                         }
                                     },

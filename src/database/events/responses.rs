@@ -13,5 +13,5 @@ pub struct EventListMsg {
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct EventAssigneeListMsg {
-    pub event_assignees: Vec<(Event, EventAssignee)>,
+    pub result: Vec<(Event, Vec<EventAssignee>)>,
 }

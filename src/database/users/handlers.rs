@@ -1,9 +1,10 @@
 use actix_web::{actix::Handler, error, Error};
 
-use super::messages::*;
 use super::methods::*;
+use super::messages::*;
 use super::models::User;
 use super::responses::*;
+
 use crate::database::DbExec;
 
 impl Handler<ListUsers> for DbExec {
@@ -12,7 +13,7 @@ impl Handler<ListUsers> for DbExec {
     fn handle(&mut self, _: ListUsers, _: &mut Self::Context) -> Self::Result {
         let db_conn = &self.0.get().map_err(error::ErrorInternalServerError)?;
         match list(db_conn) {
-            Ok(users) => Ok(UserListMsg { users: users }),
+            Ok(users) => Ok(UserListMsg { result: users }),
             Err(e) => Err(error::ErrorInternalServerError(e)),
         }
     }
@@ -24,7 +25,7 @@ impl Handler<GetUserInfo> for DbExec {
     fn handle(&mut self, user: GetUserInfo, _: &mut Self::Context) -> Self::Result {
         let db_conn = &self.0.get().map_err(error::ErrorInternalServerError)?;
         match find(db_conn, &user.adlogin) {
-            Ok(user) => Ok(UserInfoMsg { info: user }),
+            Ok(user) => Ok(UserInfoMsg { result: user }),
             Err(e) => match e {
                 diesel::result::Error::NotFound => Err(error::ErrorNotFound("No such user exists")),
                 _ => {

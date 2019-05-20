@@ -1,12 +1,9 @@
-use actix_web::middleware::session::{SessionBackend, SessionImpl};
-use actix_web::middleware::Response;
 use std::collections::HashMap;
-
-use futures::future::{ok as FutOk, FutureResult};
-
+use actix_web::middleware::Response;
 use actix_web::error::{Error, Result};
-use actix_web::HttpRequest;
-use actix_web::HttpResponse;
+use actix_web::{HttpRequest, HttpResponse};
+use futures::future::{ok as FutOk, FutureResult};
+use actix_web::middleware::session::{SessionBackend, SessionImpl};
 
 /* We cannot have a session without a backend as of 0.7, so this is a simple backend that only stores session state */
 /* TODO: implement FromRequest to replace AuthMiddleware */

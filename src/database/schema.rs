@@ -36,8 +36,7 @@ table! {
 }
 
 table! {
-    short_event_votes (id) {
-        id -> Int4,
+    short_event_votes (user_name, event_id) {
         user_name -> Varchar,
         event_id -> Int4,
     }
