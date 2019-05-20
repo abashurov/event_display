@@ -1,4 +1,4 @@
-use actix_web::{AsyncResponder, FutureResponse, HttpResponse, Json, Path, State};
+use actix_web::{AsyncResponder, FutureResponse, HttpResponse, State};
 
 use futures::future::Future;
 

@@ -1,7 +1,7 @@
 use actix_web::http::header::HeaderValue;
-use actix_web::{HttpRequest, HttpResponse};
 use actix_web::middleware::session::RequestSession;
 use actix_web::middleware::{Middleware, Response, Started};
+use actix_web::{HttpRequest, HttpResponse};
 
 use crate::routes::AppState;
 use crate::utils::tokens::{claims_from_token, token_from_claims, Claims};

@@ -1,8 +1,8 @@
 use chrono::NaiveTime;
 use diesel::sql_types::Integer;
 
-use crate::database::schema::short_events;
 use crate::database::schema::short_event_votes;
+use crate::database::schema::short_events;
 
 #[derive(AsChangeset, Debug, Clone, Insertable, Identifiable, Queryable, Serialize, Deserialize)]
 pub struct ShortEvent {

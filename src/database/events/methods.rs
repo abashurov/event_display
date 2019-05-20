@@ -1,6 +1,6 @@
-use crate::database::schema::events::dsl::*;
-use crate::database::schema::event_assignees::dsl::*;
 use super::models::{Event, EventAssignee, InsertableEvent};
+use crate::database::schema::event_assignees::dsl::*;
+use crate::database::schema::events::dsl::*;
 
 use diesel::prelude::*;
 
@@ -8,9 +8,7 @@ pub fn get(
     connection: &PgConnection,
     target_event_id: i32,
 ) -> Result<Vec<(Event, Vec<EventAssignee>)>, diesel::result::Error> {
-    let target_event = events
-        .find(target_event_id)
-        .load::<Event>(connection)?;
+    let target_event = events.find(target_event_id).load::<Event>(connection)?;
     let assignee_list = EventAssignee::belonging_to(&target_event)
         .load::<EventAssignee>(connection)?
         .grouped_by(&target_event);
@@ -100,9 +98,7 @@ pub fn list_assignees(
     connection: &PgConnection,
     target_event_id: i32,
 ) -> Result<Vec<(Event, Vec<EventAssignee>)>, diesel::result::Error> {
-    let target_event = events
-        .find(target_event_id)
-        .load::<Event>(connection)?;
+    let target_event = events.find(target_event_id).load::<Event>(connection)?;
     let assignee_list = EventAssignee::belonging_to(&target_event)
         .load::<EventAssignee>(connection)?
         .grouped_by(&target_event);
@@ -115,7 +111,15 @@ pub fn list_events(
 ) -> Result<Vec<(Event, Vec<EventAssignee>)>, diesel::result::Error> {
     // TODO: Change this to a more bearable query/filter
     let event_list = events
-        .select((id, time_from, time_to, day, event_type, group_id, display_name))
+        .select((
+            id,
+            time_from,
+            time_to,
+            day,
+            event_type,
+            group_id,
+            display_name,
+        ))
         .left_outer_join(event_assignees)
         .filter(user_name.eq(target_user_name))
         .load::<Event>(connection)?;

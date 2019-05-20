@@ -1,8 +1,8 @@
-use std::rc::Rc;
-use actix_web::HttpRequest;
-use futures::future::Future;
 use actix_web::middleware::session::RequestSession;
 use actix_web::middleware::{Middleware, Started};
+use actix_web::HttpRequest;
+use futures::future::Future;
+use std::rc::Rc;
 
 use crate::database::users::messages::GetUserInfo;
 use crate::routes::AppState;

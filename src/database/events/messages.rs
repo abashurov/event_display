@@ -1,6 +1,6 @@
 use actix_web::{actix::Message, Error};
 
-use super::models::{Event, EventAssignee, InsertableEvent};
+use super::models::{Event, InsertableEvent};
 use super::responses::{EventAssigneeListMsg, EventListMsg, StatusMsg};
 
 #[derive(Deserialize, Serialize, Debug)]

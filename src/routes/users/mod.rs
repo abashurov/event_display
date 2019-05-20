@@ -1,9 +1,9 @@
-use futures::future::Future;
 use actix_web::{AsyncResponder, FutureResponse, HttpResponse, Json, Path, State};
+use futures::future::Future;
 
-use crate::routes::AppState;
 use crate::database::users::messages::*;
-use crate::database::users::models::{ExposableUser, UpdateableUser, User};
+use crate::database::users::models::{UpdateableUser, User};
+use crate::routes::AppState;
 
 #[derive(Serialize, Deserialize)]
 pub struct UserChangeSet {

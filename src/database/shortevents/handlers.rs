@@ -1,8 +1,7 @@
 use actix_web::{actix::Handler, error, Error};
 
-use super::models::*;
-use super::methods::*;
 use super::messages::*;
+use super::methods::*;
 use super::responses::{ShortEventListMsg, StatusMsg};
 
 use crate::database::DbExec;
@@ -13,9 +12,7 @@ impl Handler<ListShortEvents> for DbExec {
     fn handle(&mut self, _: ListShortEvents, _: &mut Self::Context) -> Self::Result {
         let db_conn = &self.0.get().map_err(error::ErrorInternalServerError)?;
         match list(db_conn) {
-            Ok(event_list) => Ok(ShortEventListMsg {
-                result: event_list,
-            }),
+            Ok(event_list) => Ok(ShortEventListMsg { result: event_list }),
             Err(e) => {
                 warn!("Query for the event list failed: {}", e);
                 Err(error::ErrorInternalServerError(e))
@@ -30,9 +27,7 @@ impl Handler<GetShortEvent> for DbExec {
     fn handle(&mut self, message: GetShortEvent, _: &mut Self::Context) -> Self::Result {
         let db_conn = &self.0.get().map_err(error::ErrorInternalServerError)?;
         match get(db_conn, message.shortevent_id) {
-            Ok(event_info) => Ok(ShortEventListMsg {
-                result: event_info,
-            }),
+            Ok(event_info) => Ok(ShortEventListMsg { result: event_info }),
             Err(e) => Err(error::ErrorInternalServerError(e)),
         }
     }
@@ -61,7 +56,9 @@ impl Handler<DeleteShortEvent> for DbExec {
         if let Ok(shortevent_meta) = get(db_conn, message.shortevent_id) {
             if let Some(shortevent) = shortevent_meta.get(0) {
                 if shortevent.0.user_name != message.user_name {
-                    Err(error::ErrorForbidden("You are not the owner of the event, please vote instead"))
+                    Err(error::ErrorForbidden(
+                        "You are not the owner of the event, please vote instead",
+                    ))
                 } else {
                     match delete(db_conn, message.shortevent_id) {
                         Ok(_) => Ok(StatusMsg {

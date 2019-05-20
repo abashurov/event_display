@@ -1,11 +1,11 @@
-use futures::future::Future;
 use actix_web::http::header::HeaderValue;
 use actix_web::middleware::session::RequestSession;
 use actix_web::{AsyncResponder, FutureResponse, HttpRequest, HttpResponse, Json, State};
+use futures::future::Future;
 
+use crate::database::users::messages::{GetUserInfo, GetUserPassword, SetUserPassword};
 use crate::routes::AppState;
 use crate::utils::tokens::{token_from_claims, Credentials};
-use crate::database::users::messages::{GetUserInfo, GetUserPassword, SetUserPassword};
 
 #[derive(Deserialize, Serialize)]
 pub struct Password {

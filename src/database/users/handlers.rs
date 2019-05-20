@@ -1,7 +1,7 @@
 use actix_web::{actix::Handler, error, Error};
 
-use super::methods::*;
 use super::messages::*;
+use super::methods::*;
 use super::models::User;
 use super::responses::*;
 

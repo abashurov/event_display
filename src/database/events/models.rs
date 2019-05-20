@@ -1,7 +1,7 @@
 use chrono::NaiveTime;
 
-use crate::database::schema::events;
 use crate::database::schema::event_assignees;
+use crate::database::schema::events;
 
 #[derive(
     Associations, Debug, Clone, Insertable, Identifiable, Queryable, Serialize, Deserialize,

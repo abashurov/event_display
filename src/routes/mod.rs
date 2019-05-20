@@ -1,17 +1,17 @@
 pub mod auth;
-pub mod users;
 pub mod events;
 pub mod groups;
 pub mod shortevents;
+pub mod users;
 
 use actix::prelude::{Addr, SyncArbiter};
 use actix_web::middleware::session::SessionStorage;
-use actix_web::{http::Method, middleware::Logger, App};
+use actix_web::{middleware::Logger, App};
 
 use crate::database::{ignite, DbExec};
 use crate::middlewares::auth::AuthMiddleware;
-use crate::middlewares::role::RoleMiddleware;
 use crate::middlewares::authstorage::AuthSessionBackend;
+use crate::middlewares::role::RoleMiddleware;
 
 pub struct AppState {
     pub db: Addr<DbExec>,

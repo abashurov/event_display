@@ -1,10 +1,9 @@
-use diesel::dsl::sql;
 use diesel::prelude::*;
 
-use super::models::{InsertableShortEvent, ShortEvent, ShortEventVote, GroupedShortEvent};
+use super::models::{GroupedShortEvent, InsertableShortEvent, ShortEvent, ShortEventVote};
 
-use crate::database::schema::short_events::dsl::*;
 use crate::database::schema::short_event_votes::dsl::*;
+use crate::database::schema::short_events::dsl::*;
 
 pub fn list(
     connection: &PgConnection,
@@ -68,8 +67,10 @@ pub fn check_votes(connection: &PgConnection) -> Result<usize, diesel::result::E
      *
      * https://github.com/diesel-rs/diesel/issues/210
      */
-    match diesel::sql_query("SELECT event_id FROM short_event_votes GROUP BY event_id HAVING COUNT(*) >= 3;")
-        .load::<GroupedShortEvent>(connection)
+    match diesel::sql_query(
+        "SELECT event_id FROM short_event_votes GROUP BY event_id HAVING COUNT(*) >= 3;",
+    )
+    .load::<GroupedShortEvent>(connection)
     {
         Ok(events) => {
             let event_ids: Vec<i32> = events.iter().map(|event| event.event_id).collect();

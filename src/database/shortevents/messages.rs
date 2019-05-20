@@ -1,7 +1,7 @@
 use actix_web::{actix::Message, Error};
 
+use super::models::{InsertableShortEvent, ShortEventVote};
 use super::responses::{ShortEventListMsg, StatusMsg};
-use super::models::{InsertableShortEvent, ShortEvent, ShortEventVote};
 
 #[derive(Deserialize, Serialize, Debug)]
 pub struct ListShortEvents {}

@@ -1,11 +1,11 @@
-use chrono::offset::Utc;
-use futures::future::Future;
 use actix_web::middleware::session::RequestSession;
 use actix_web::{AsyncResponder, FutureResponse, HttpRequest, HttpResponse, Json, Path, State};
+use chrono::offset::Utc;
+use futures::future::Future;
 
-use crate::routes::AppState;
 use crate::database::shortevents::messages::*;
 use crate::database::shortevents::models::{InsertableShortEvent, ShortEventVote};
+use crate::routes::AppState;
 
 #[derive(Serialize, Deserialize)]
 pub struct SerializableShortEvent {
